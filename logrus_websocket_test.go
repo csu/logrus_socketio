@@ -9,10 +9,10 @@ func TestPrint(t *testing.T) {
   log := logrus.New()
   log.Formatter = new(logrus.JSONFormatter)
 
-  m := make(map[string]string)
+  m := make(map[string]interface{})
   m["secret"] = "example-secret-here"
   
-  hook, err := NewHttpHook("http://logserver.christopher.su/log", "logContent", m)
+  hook, err := NewWebsocketHook("ws://logserver.christopher.su/", "http://logserver.christopher.su/", "log", m)
   if err != nil {
     t.Errorf("Unable to create hook.")
   }
