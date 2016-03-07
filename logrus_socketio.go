@@ -1,4 +1,4 @@
-package logrus_http
+package logrus_socketio
 
 import (
 	"github.com/Sirupsen/logrus"
