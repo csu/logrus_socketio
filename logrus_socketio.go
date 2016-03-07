@@ -20,7 +20,7 @@ func NewSocketIOHook(uri string, event string, extraLogFields map[string]interfa
 
 	client, err := socketio_client.NewClient(uri, opts)
 	if err != nil {
-		return &SocketIOHook{}, err
+		return &SocketIOHook{}, errors.New("failed to create client")
 	}
 
 	return &SocketIOHook{client, event, extraLogFields}, nil
