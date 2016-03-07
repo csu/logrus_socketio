@@ -9,9 +9,9 @@ func TestPrint(t *testing.T) {
   log := logrus.New()
   log.Formatter = new(logrus.JSONFormatter)
 
-  //m := make(map[string]interface{})
+  m := make(map[string]interface{})
 
-  hook, err := NewSocketIOHook("http://log.461.christopher.su/", "log")
+  hook, err := NewSocketIOHook("http://log.461.christopher.su/", "log", m)
   if err != nil {
     t.Errorf("Unable to create hook.")
   }
