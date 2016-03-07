@@ -10,7 +10,6 @@ func TestPrint(t *testing.T) {
   log.Formatter = new(logrus.JSONFormatter)
 
   m := make(map[string]interface{})
-  m["secret"] = "example-secret-here"
   
   hook, err := NewSocketIOHook("http://logserver.christopher.su/", "log", m)
   if err != nil {

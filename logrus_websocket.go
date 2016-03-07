@@ -2,11 +2,11 @@ package logrus_http
 
 import (
 	"github.com/Sirupsen/logrus"
-	"github.com/googollee/go-socket.io"
+	"github.com/zhouhui8915/go-socket.io-client"
 )
 
 type SocketIOHook struct {
-	Socket	    	socketio.Socket
+	Client	    	*socketio_client.Client
 	EventName     	string
 	LogExtraFields  map[string]interface{}
 }
@@ -14,17 +14,17 @@ type SocketIOHook struct {
 // Creates a hook to be added to an instance of logger. This is called with
 // `hook, err := NewSocketIOHook("http://log-server/post_new_log", "logBody")`
 // `if err == nil { log.Hooks.Add(hook) }`
-func NewSocketIOHook(endpoint string, event string, extraLogFields map[string]interface{}) (*SocketIOHook, error) {
-	server, err := socketio.NewServer(endpoint)
+func NewSocketIOHook(uri string, event string, extraLogFields map[string]interface{}) (*SocketIOHook, error) {
+	opts := &socketio_client.Options{
+		Transport: "websocket",
+	}
+
+	client, err := socketio_client.NewClient(uri, opts)
 	if err != nil {
 		return nil, err
 	}
 
-	server.On("connection", func(so socketio.Socket) {
-		return &SocketIOHook{so, event, extraLogFields}, nil
-	})
-
-	return nil, nil
+	return &SocketIOHook{client, event, extraLogFields}, nil
 }
 
 func (hook *SocketIOHook) Fire(entry *logrus.Entry) error {
@@ -33,10 +33,7 @@ func (hook *SocketIOHook) Fire(entry *logrus.Entry) error {
 		return err
 	}
 
-	_, err = hook.Socket.Emit(hook.EventName, line)
-	if err != nil {
-		return err
-	}
+	hook.Client.Emit(hook.EventName, line)
 
 	return nil
 }
