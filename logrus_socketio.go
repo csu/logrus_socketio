@@ -11,9 +11,6 @@ type SocketIOHook struct {
 	LogExtraFields  map[string]interface{}
 }
 
-// Creates a hook to be added to an instance of logger. This is called with
-// `hook, err := NewSocketIOHook("http://log-server/post_new_log", "logBody")`
-// `if err == nil { log.Hooks.Add(hook) }`
 func NewSocketIOHook(uri string, event string, extraLogFields map[string]interface{}) (*SocketIOHook, error) {
 	opts := &socketio_client.Options{
 		Transport: "websocket",
