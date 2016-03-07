@@ -8,10 +8,9 @@ import (
 type SocketIOHook struct {
 	Client	    	*socketio_client.Client
 	EventName     	string
-	LogExtraFields  map[string]interface{}
 }
 
-func NewSocketIOHook(uri string, event string, extraLogFields map[string]interface{}) (*SocketIOHook, error) {
+func NewSocketIOHook(uri string, event string) (*SocketIOHook, error) {
 	opts := &socketio_client.Options{
 		Transport: "websocket",
 	}
@@ -21,11 +20,12 @@ func NewSocketIOHook(uri string, event string, extraLogFields map[string]interfa
 		return nil, err
 	}
 
-	return &SocketIOHook{client, event, extraLogFields}, nil
+	return &SocketIOHook{client, event}, nil
 }
 
 func (hook *SocketIOHook) Fire(entry *logrus.Entry) error {
-	line, err := entry.WithFields(hook.LogExtraFields).String()
+	//line, err := entry.WithFields(hook.LogExtraFields).String()
+	line, err := entry.String()
 	if err != nil {
 		return err
 	}
