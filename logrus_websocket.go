@@ -2,35 +2,38 @@ package logrus_http
 
 import (
 	"github.com/Sirupsen/logrus"
-	"golang.org/x/net/websocket"
+	"github.com/googollee/go-socket.io"
 )
 
-type WebsocketHook struct {
-	Websocket    	*websocket.Conn
+type SocketIOHook struct {
+	Socket	    	socketio.Socket
 	EventName     	string
 	LogExtraFields  map[string]interface{}
 }
 
 // Creates a hook to be added to an instance of logger. This is called with
-// `hook, err := NewWebsocketHook("http://log-server/post_new_log", "logBody")`
+// `hook, err := NewSocketIOHook("http://log-server/post_new_log", "logBody")`
 // `if err == nil { log.Hooks.Add(hook) }`
-func NewWebsocketHook(endpoint string, origin string, event string,
-	extraLogFields map[string]interface{}) (*WebsocketHook, error) {
-	ws, err := websocket.Dial(endpoint, "", origin)
+func NewSocketIOHook(endpoint string, event string, extraLogFields map[string]interface{}) (*SocketIOHook, error) {
+	server, err := socketio.NewServer(endpoint)
 	if err != nil {
 		return nil, err
 	}
 
-	return &WebsocketHook{ws, event, extraLogFields}, nil
+	server.On("connection", func(so socketio.Socket) {
+		return &SocketIOHook{so, event, extraLogFields}, nil
+	})
+
+	return nil, nil
 }
 
-func (hook *WebsocketHook) Fire(entry *logrus.Entry) error {
+func (hook *SocketIOHook) Fire(entry *logrus.Entry) error {
 	line, err := entry.WithFields(hook.LogExtraFields).String()
 	if err != nil {
 		return err
 	}
 
-	_, err = hook.Websocket.Write([]byte(line))
+	_, err = hook.Socket.Emit(hook.EventName, line)
 	if err != nil {
 		return err
 	}
@@ -38,6 +41,6 @@ func (hook *WebsocketHook) Fire(entry *logrus.Entry) error {
 	return nil
 }
 
-func (hook *WebsocketHook) Levels() []logrus.Level {
+func (hook *SocketIOHook) Levels() []logrus.Level {
 	return logrus.AllLevels
 }

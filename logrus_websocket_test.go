@@ -12,7 +12,7 @@ func TestPrint(t *testing.T) {
   m := make(map[string]interface{})
   m["secret"] = "example-secret-here"
   
-  hook, err := NewWebsocketHook("ws://logserver.christopher.su/", "http://logserver.christopher.su/", "log", m)
+  hook, err := NewSocketIOHook("http://logserver.christopher.su/", "log", m)
   if err != nil {
     t.Errorf("Unable to create hook.")
   }
