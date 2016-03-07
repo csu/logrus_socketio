@@ -20,16 +20,13 @@ func NewSocketIOHook(uri string, event string, extraLogFields map[string]interfa
 
 	client, err := socketio_client.NewClient(uri, opts)
 	if err != nil {
-		return &SocketIOHook{}, errors.New("failed to create client")
+		return &SocketIOHook{}, err
 	}
 
 	return &SocketIOHook{client, event, extraLogFields}, nil
 }
 
 func (hook *SocketIOHook) Fire(entry *logrus.Entry) error {
-	if (hook == nil) {
-		return errors.New("wtf")
-	}
 	if hook.Client == nil {
 		return errors.New("Socket.IO client does not exist")
 	}

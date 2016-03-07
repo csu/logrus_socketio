@@ -11,9 +11,10 @@ func TestPrint(t *testing.T) {
 
   m := make(map[string]interface{})
 
-  hook, err := NewSocketIOHook("http://log.461.christopher.su/", "log", m)
+  hook, err := NewSocketIOHook("http://localhost:3000", "log", m)
   if err != nil {
-    t.Errorf("Unable to create hook.")
+	  t.Error(err)
+	  t.Errorf("Unable to create hook.")
   }
 
   log.Hooks.Add(hook)
