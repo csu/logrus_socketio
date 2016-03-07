@@ -1,23 +1,37 @@
 package logrus_socketio
 
 import (
-  "github.com/Sirupsen/logrus"
-  "testing"
+	"github.com/Sirupsen/logrus"
+	"testing"
+	"github.com/googollee/go-socket.io"
+"net/http"
 )
 
 func TestPrint(t *testing.T) {
-  log := logrus.New()
-  log.Formatter = new(logrus.JSONFormatter)
+	// start up server
+	server, err := socketio.NewServer(nil)
+	if err != nil {
+		t.Error(err)
+	}
+	server.On("connection", func(so socketio.Socket) {})
+	server.On("error", func(so socketio.Socket, err error) {
+		t.Error(err)
+	})
+	http.Handle("/socket.io/", server)
+	go http.ListenAndServe(":3000", nil)
 
-  m := make(map[string]interface{})
+	log := logrus.New()
+	log.Formatter = new(logrus.JSONFormatter)
 
-  hook, err := NewSocketIOHook("http://localhost:3000", "log", m)
-  if err != nil {
-	  t.Error(err)
-	  t.Errorf("Unable to create hook.")
-  }
+	m := make(map[string]interface{})
 
-  log.Hooks.Add(hook)
+	hook, err := NewSocketIOHook("http://localhost:3000", "log", m)
+	if err != nil {
+		t.Error(err)
+		t.Errorf("Unable to create hook.")
+	}
 
-  log.Info("It worked!")
+	log.Hooks.Add(hook)
+
+	log.Info("It worked!")
 }
