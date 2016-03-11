@@ -27,10 +27,6 @@ func NewSocketIOHook(uri string, event string, extraLogFields map[string]interfa
 }
 
 func (hook *SocketIOHook) Fire(entry *logrus.Entry) error {
-	if hook.Client == nil {
-		return errors.New("Socket.IO client does not exist")
-	}
-
 	line, err := entry.WithFields(hook.LogExtraFields).String()
 	if err != nil {
 		return err
