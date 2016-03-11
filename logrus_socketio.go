@@ -3,7 +3,6 @@ package logrus_socketio
 import (
 	"github.com/Sirupsen/logrus"
 	"github.com/zhouhui8915/go-socket.io-client"
-	"errors"
 )
 
 type SocketIOHook struct {
